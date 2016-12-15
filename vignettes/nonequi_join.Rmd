@@ -18,7 +18,7 @@ An **nonequi join** is an inner join that uses an inequality operation (i.e: >, 
 
 ```{r libs}
 library(fuzzyjoin)
-library(tidyverse)
+library(dplyr)
 ```
 
 For example, let's say we have a vector (or column of a data frame) of elements, and a dataframe of intervals, with a column each for the start and end values of each interval:
