@@ -8,7 +8,9 @@
 #'
 #' @param x A tbl
 #' @param y A tbl
-#' @param by Columns by which to join the two tables
+#' @param by Columns by which to join the two tables. Must contain 'lon'
+#'  for longitute, and 'lat' for latitude, such as 'lat', or
+#'  'lat.y', or 'latitude'.
 #' @param max_dist Maximum distance to use for joining
 #' @param method Method to use for computing distance: one of
 #' "haversine" (default), "geo", "cosine", "meeus", "vincentysphere",
@@ -29,6 +31,7 @@
 #' \code{fuzzy_join}.
 #'
 #' @importFrom utils data
+#' @importFrom dplyr common_by data_frame
 #'
 #' @examples
 #'
@@ -74,7 +77,7 @@ geo_join <- function(x, y, by = NULL, max_dist,
   unit <- match.arg(unit)
 
   # make sure longitude and latitude are in the right order
-  by <- common_by(by, x, y)
+  by <- dplyr::common_by(by, x, y)
   by <- lapply(by, function(e) {
     if (length(e) != 2) {
       stop("Trying to join on ", paste(e, collapse = ", "),
