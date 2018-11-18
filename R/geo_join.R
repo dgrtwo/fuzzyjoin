@@ -10,7 +10,7 @@
 #' @param y A tbl
 #' @param by Columns by which to join the two tables. Must contain 'lon'
 #'  for longitute, and 'lat' for latitude, such as 'lat', or
-#'  'lat.y', or 'lattitude'.
+#'  'lat.y', or 'latitude'.
 #' @param max_dist Maximum distance to use for joining
 #' @param method Method to use for computing distance: one of
 #' "haversine" (default), "geo", "cosine", "meeus", "vincentysphere",

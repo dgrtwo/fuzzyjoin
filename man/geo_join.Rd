@@ -61,7 +61,7 @@ geo_anti_join(x, y, by = NULL, method = "haversine", max_dist = 1,
 
 \item{by}{Columns by which to join the two tables. Must contain 'lon'
 for longitute, and 'lat' for latitude, such as 'lat', or
-'lat.y', or 'lattitude'.}
+'lat.y', or 'latitude'.}
 
 \item{max_dist}{Maximum distance to use for joining}
 
