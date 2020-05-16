@@ -1,0 +1,59 @@
+---
+title: "Example of a nonequi join: How to do join on inequality constraints"
+author: "Ben Marwick"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Example of a nonequi join: How to do join on inequality constraints}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, echo = FALSE, warning = FALSE}
+library(knitr)
+opts_chunk$set(cache = TRUE, message = FALSE, warning = FALSE)
+```
+
+An **nonequi join** is an inner join that uses an inequality operation (i.e: >, <, >=, <=, !=, etc.) to match rows from different tables. Commonly these are used to join tables where we want to match within intervals or ranges of values. The fuzzyjoin package is ideal for handling this kind of inexact matching task. In this vignette we'll demonstrate how to use the fuzzyjoin and tidyverse packages for a nonequi join.
+
+```{r libs}
+library(fuzzyjoin)
+library(dplyr)
+```
+
+For example, let's say we have a vector (or column of a data frame) of elements, and a dataframe of intervals, with a column each for the start and end values of each interval:
+
+```{r exampledata}
+# Here is our vector of elements
+elements <- c(0.1, 0.2, 0.5, 0.9, 1.1, 1.9, 2.1)
+
+# Here is our data frame of intervals (called phases here)
+intervals <-  frame_data(~phase, ~start, ~end,
+                            "a",     0,    0.5,
+                            "b",     1,    1.9,
+                            "c",     2,    2.5)
+```
+
+Here we have three phases (or intervals), and a set of elements, some of which fall into the three phases. How can we easily determine the phase that each element belongs to?
+
+The fuzzyjoin package contains the function `fuzzy_left_join` which we can use for this task. Unlike the `left_join` function in `dplyr`, which allows only equijoins, we can use inequalities with `fuzzy_left_join`. 
+
+We present the inequality operators that we want to use in the `match_fun` argument, and indicate the columns to compare in the `by` argument, like so:
+
+```{r nonequijoin}
+nonequijoin <- 
+fuzzy_left_join(data.frame(elements), 
+                intervals, 
+                by = c("elements" = "start", 
+                       "elements" = "end"), 
+                match_fun = list(`>=`, `<=`)) %>% 
+  distinct()
+```
+
+As we can see below, the result is a dataframe with one row for each item in our `elements` vector. We can see the phase name and start and depth values has been determined each element. 
+
+```{r output}
+nonequijoin
+```
+
+Nonequi joins are also possible with the data.table package. However, if you are familiar with the tidyverse and its piping idiom, you may find using fuzzyjoin package for nonequi joins more convenient. 
