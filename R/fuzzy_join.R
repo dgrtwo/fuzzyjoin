@@ -36,7 +36,7 @@
 #' but preserves the grouping of x in the output.
 #'
 #' @importFrom dplyr %>%
-#' @importFrom tibble tibble
+#' @importFrom tibble tibble as_tibble
 #'
 #' @export
 fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,

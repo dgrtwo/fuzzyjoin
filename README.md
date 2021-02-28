@@ -85,7 +85,7 @@ misspellings
 # use the dictionary of words from the qdapDictionaries package,
 # which is based on the Nettalk corpus.
 library(qdapDictionaries)
-words <- tbl_df(DICTIONARY)
+words <- as_tibble(DICTIONARY)
 
 words
 #> # A tibble: 20,137 x 2

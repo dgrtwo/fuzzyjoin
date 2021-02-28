@@ -1,3 +1,8 @@
+# fuzzyjoin 0.1.6.9000
+
+* Replaces instances of `dplyr::tbl_df()` with `tibble::as_tibble()`, since
+`tbl_df()` is deprecated as of dplyr 1.0.0.
+
 # fuzzyjoin 0.1.6
 
 * Updates to internals to make compatible with dplyr 1.0.0 (#67, @hadley)

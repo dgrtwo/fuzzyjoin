@@ -18,7 +18,7 @@
 #' library(ggplot2)
 #' data(diamonds)
 #'
-#' diamonds <- tbl_df(diamonds)
+#' diamonds <- as_tibble(diamonds)
 #'
 #' d <- data_frame(regex_name = c("^Idea", "mium", "Good"),
 #'                 type = 1:3)

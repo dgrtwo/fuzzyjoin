@@ -1,7 +1,7 @@
 Package: fuzzyjoin
 Type: Package
 Title: Join Tables Together on Inexact Matching
-Version: 0.1.6
+Version: 0.1.6.9000
 Authors@R: c(person("David", "Robinson", email = "admiral.david@gmail.com",
     role = c("aut", "cre")),
           person("Jennifer", "Bryan", email = "jenny@rstudio.com", role = "ctb"),
@@ -35,6 +35,6 @@ Suggests:
     maps,
     IRanges,
     covr
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1.9001
 URL: https://github.com/dgrtwo/fuzzyjoin
 BugReports: https://github.com/dgrtwo/fuzzyjoin/issues
