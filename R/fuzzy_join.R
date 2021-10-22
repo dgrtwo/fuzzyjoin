@@ -62,8 +62,8 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
   matches <- switch(
     match_fun_type,
     match_fun = get_matches(x, y, by, match_fun, ...),
-    multi_match_fun = get_matches_multi(x, y, by, multi_match_fun, multi_by),
-    index_match_fun = get_matches_index(x, y, by, index_match_fun, multi_by)
+    multi_match_fun = get_matches_multi(x, y, multi_by, multi_match_fun),
+    index_match_fun = get_matches_index(x, y, multi_by, index_match_fun)
   )
   matches <- complete_matches(matches, mode, nrow(x), nrow(y))
   ret <- build_output(x, y, matches, mode)

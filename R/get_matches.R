@@ -47,7 +47,7 @@ get_matches <- function(x, y, by, match_fun, ...) {
   matches
 }
 
-get_matches_multi <- function(x, y, by, multi_match_fun, multi_by) {
+get_matches_multi <- function(x, y, multi_by, multi_match_fun) {
   multi_match_fun <- purrr::as_mapper(multi_match_fun)
 
   # use multiple matches
@@ -76,6 +76,7 @@ get_matches_multi <- function(x, y, by, multi_match_fun, multi_by) {
   pairs <- matrix(NA, nrow(ux), nrow(uy))
   ix <- row(pairs)
   iy <- col(pairs)
+  # we should have drop = FALSE here
   ux_input <- ux[ix, ]
   uy_input <- uy[iy, ]
 
@@ -113,7 +114,7 @@ get_matches_multi <- function(x, y, by, multi_match_fun, multi_by) {
 }
 
 
-get_matches_index <- function(x, y, by, index_match_fun, multi_by) {
+get_matches_index <- function(x, y, multi_by, index_match_fun) {
   # raw index-index function
   index_match_fun <- purrr::as_mapper(index_match_fun)
   by <- common_by(multi_by, x, y)
