@@ -73,7 +73,8 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
     multi_match_fun = get_matches_multi(x, y, by, multi_match_fun, multi_by),
     index_match_fun = get_matches_index(x, y, by, index_match_fun, multi_by)
   )
-  matches$i <- NULL
+
+  matches <- complete_matches(matches, mode, nrow(x), nrow(y))
 
   if (mode == "semi") {
     # just use the x indices to include
@@ -87,31 +88,16 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
     return(regroup(x[-sort(unique(matches$x)), , drop = FALSE]))
   }
 
-  matches <- dplyr::arrange(matches, x, y)
-
   # in cases where columns share a name, rename each to .x and .y
   n <- intersect(colnames(x), colnames(y))
   x <- dplyr::rename_at(x, .vars = n, ~ paste0(.x, ".x"))
   y <- dplyr::rename_at(y, .vars = n, ~ paste0(.x, ".y"))
 
-  # fill in indices of the x, y, or both
-  # curious if there's a higher performance approach
-  if (mode == "left") {
-    matches <- tibble::tibble(x = seq_len(nrow(x))) %>%
-      dplyr::left_join(matches, by = "x")
-  } else if (mode == "right") {
-    matches <- tibble::tibble(y = seq_len(nrow(y))) %>%
-      dplyr::left_join(matches, by = "y")
-  } else if (mode == "full") {
-    matches <- matches %>%
-      dplyr::full_join(tibble::tibble(x = seq_len(nrow(x))), by = "x") %>%
-      dplyr::full_join(tibble::tibble(y = seq_len(nrow(y))), by = "y")
-  }
-
   ret <- dplyr::bind_cols(
     unrowwname(x[matches$x, , drop = FALSE]),
     unrowwname(y[matches$y, , drop = FALSE])
   )
+
   if (ncol(matches) > 2) {
     extra_cols <- unrowwname(matches[, -(1:2), drop = FALSE])
     ret <- dplyr::bind_cols(ret, extra_cols)

@@ -195,3 +195,26 @@ get_matches1 <- function(i, x, y, by, match_fun, ...) {
 
   ret
 }
+
+complete_matches <- function(matches, mode, n_x, n_y) {
+  matches$i <- NULL
+  if(mode %in% c("semi", "anti")) {
+    return(matches)
+  }
+  matches <- dplyr::arrange(matches, x, y)
+
+  # fill in indices of the x, y, or both
+  # curious if there's a higher performance approach
+  if (mode == "left") {
+    matches <- tibble::tibble(x = seq_len(n_x)) %>%
+      dplyr::left_join(matches, by = "x")
+  } else if (mode == "right") {
+    matches <- tibble::tibble(y = seq_len(n_y)) %>%
+      dplyr::left_join(matches, by = "y")
+  } else if (mode == "full") {
+    matches <- matches %>%
+      dplyr::full_join(tibble::tibble(x = seq_len(n_x)), by = "x") %>%
+      dplyr::full_join(tibble::tibble(y = seq_len(n_y)), by = "y")
+  }
+  matches
+}
