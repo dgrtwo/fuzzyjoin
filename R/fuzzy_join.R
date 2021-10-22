@@ -48,9 +48,13 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
   x_groups <- dplyr::groups(x)
   x <- dplyr::ungroup(x)
 
-  match_fun_type <- c("match_fun", "multi_match_fun", "index_match_fun")[
-    c(!is.null(match_fun), !is.null(multi_match_fun), !is.null(index_match_fun))
+  match_fun_types <- c("match_fun", "multi_match_fun", "index_match_fun")
+  match_fun_type <- match_fun_types[
+    c(!is.null(match_fun),
+      !is.null(multi_match_fun),
+      !is.null(index_match_fun))
   ]
+
   if (length(match_fun_type) > 1) {
     stop("Must give exactly one of match_fun, multi_match_fun, and index_match_fun")
   }
@@ -61,9 +65,7 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
     multi_match_fun = get_matches_multi(x, y, by, multi_match_fun, multi_by),
     index_match_fun = get_matches_index(x, y, by, index_match_fun, multi_by)
   )
-
   matches <- complete_matches(matches, mode, nrow(x), nrow(y))
-
   ret <- build_output(x, y, matches, mode)
   ret <- regroup(ret, x_groups)
 
