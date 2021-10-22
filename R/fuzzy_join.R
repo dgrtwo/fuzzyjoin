@@ -45,18 +45,6 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
   # preserve the grouping of x
   x_groups <- dplyr::groups(x)
   x <- dplyr::ungroup(x)
-  regroup <- function(d) {
-    if (length(x_groups) == 0) {
-      return(d)
-    }
-
-    g <- purrr::map_chr(x_groups, as.character)
-    missing <- !(g %in% colnames(d))
-    # add .x to those that are missing; they've been renamed
-    g[missing] <- paste0(g[missing], ".x")
-
-    dplyr::group_by_at(d, g)
-  }
 
   mode <- match.arg(mode, c("inner", "left", "right", "full", "semi", "anti"))
 
@@ -77,7 +65,7 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
   matches <- complete_matches(matches, mode, nrow(x), nrow(y))
 
   ret <- build_output(x, y, matches, mode)
-  ret <- regroup(ret)
+  ret <- regroup(ret, x_groups)
 
   # Base the type (data.frame vs tbl_df) on x, not on y
   if (!inherits(x, "tbl_df")) {
@@ -87,6 +75,18 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
   ret
 }
 
+regroup <- function(d, x_groups) {
+  if (length(x_groups) == 0) {
+    return(d)
+  }
+
+  g <- purrr::map_chr(x_groups, as.character)
+  missing <- !(g %in% colnames(d))
+  # add .x to those that are missing; they've been renamed
+  g[missing] <- paste0(g[missing], ".x")
+
+  dplyr::group_by_at(d, g)
+}
 
 build_output <- function(x, y, matches, mode) {
   if (mode == "semi") {
