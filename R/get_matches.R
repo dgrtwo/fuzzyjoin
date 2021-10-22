@@ -62,6 +62,7 @@ get_matches_multi <- function(x, y, by, multi_match_fun, multi_by) {
     dplyr::group_by_at(dplyr::vars(-dplyr::one_of("indices"))) %>%
     tidyr::nest() %>%
     dplyr::mutate(indices = purrr::map(data, "indices"))
+
   indices_y <- y %>%
     dplyr::select_at(by$y) %>%
     dplyr::mutate(indices = seq_len(number_y_rows)) %>%
@@ -91,21 +92,23 @@ get_matches_multi <- function(x, y, by, multi_match_fun, multi_by) {
   if (sum(m) == 0) {
     # there are no matches
     matches <- tibble::tibble(x = numeric(0), y = numeric(0))
-  } else {
-    x_indices_l <- indices_x$indices[ix[m]]
-    y_indices_l <- indices_y$indices[iy[m]]
-    xls <- purrr::map_dbl(x_indices_l, length)
-    yls <- purrr::map_dbl(y_indices_l, length)
-    x_rep <- unlist(purrr::map2(x_indices_l, yls, function(x, y) rep(x, each = y)))
-    y_rep <- unlist(purrr::map2(y_indices_l, xls, function(y, x) rep(y, x)))
-
-    matches <- tibble::tibble(x = x_rep, y = y_rep)
-    if (!is.null(extra_cols)) {
-      extra_indices <- rep(which(m), xls * yls)
-      extra_cols_rep <- extra_cols[extra_indices, , drop = FALSE]
-      matches <- dplyr::bind_cols(matches, extra_cols_rep)
-    }
+    return(matches)
   }
+
+  x_indices_l <- indices_x$indices[ix[m]]
+  y_indices_l <- indices_y$indices[iy[m]]
+  xls <- purrr::map_dbl(x_indices_l, length)
+  yls <- purrr::map_dbl(y_indices_l, length)
+  x_rep <- unlist(purrr::map2(x_indices_l, yls, function(x, y) rep(x, each = y)))
+  y_rep <- unlist(purrr::map2(y_indices_l, xls, function(y, x) rep(y, x)))
+
+  matches <- tibble::tibble(x = x_rep, y = y_rep)
+  if (!is.null(extra_cols)) {
+    extra_indices <- rep(which(m), xls * yls)
+    extra_cols_rep <- extra_cols[extra_indices, , drop = FALSE]
+    matches <- dplyr::bind_cols(matches, extra_cols_rep)
+  }
+
   matches
 }
 
