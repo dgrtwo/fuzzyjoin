@@ -18,29 +18,32 @@ get_matches <- function(x, y, by, match_fun, ...) {
   # for each pair of key columns build a match data frame, and bind them
   matches <- purrr::map_dfr(seq_along(by$x), get_matches1, x, y, by, match_fun, ...)
 
-  if (length(by$x) > 1) {
-    # only take cases where all pairs have matches
-    accept <- matches %>%
-      dplyr::count(x, y) %>%
-      dplyr::ungroup() %>%
-      dplyr::filter(n == length(by$x))
-
-    matches <- matches %>%
-      dplyr::semi_join(accept, by = c("x", "y"))
-
-    if (ncol(matches) > 3) {
-      # include one for each
-      matches <- matches %>%
-        dplyr::semi_join(accept, by = c("x", "y")) %>%
-        dplyr::mutate(name = by$x[i]) %>%
-        dplyr::select(-i) %>%
-        tidyr::gather(key, value, -x, -y, -name) %>%
-        tidyr::unite(newname, name, key, sep = ".") %>%
-        tidyr::spread(newname, value)
-    } else {
-      matches <- dplyr::distinct(matches, x, y)
-    }
+  if (length(by$x) == 1) {
+    return(matches)
   }
+
+  # only take cases where all pairs have matches
+  accept <- matches %>%
+    dplyr::count(x, y) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(n == length(by$x))
+
+  matches <- matches %>%
+    dplyr::semi_join(accept, by = c("x", "y"))
+
+  if (ncol(matches) == 3) {
+    return(dplyr::distinct(matches, x, y))
+  }
+
+  # include one for each
+  matches <- matches %>%
+    dplyr::semi_join(accept, by = c("x", "y")) %>%
+    dplyr::mutate(name = by$x[i]) %>%
+    dplyr::select(-i) %>%
+    tidyr::gather(key, value, -x, -y, -name) %>%
+    tidyr::unite(newname, name, key, sep = ".") %>%
+    tidyr::spread(newname, value)
+
   matches
 }
 
