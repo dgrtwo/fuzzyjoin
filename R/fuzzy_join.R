@@ -42,11 +42,11 @@
 fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
                        multi_by = NULL, multi_match_fun = NULL,
                        index_match_fun = NULL, mode = "inner", ...) {
+  mode <- match.arg(mode, c("inner", "left", "right", "full", "semi", "anti"))
+
   # preserve the grouping of x
   x_groups <- dplyr::groups(x)
   x <- dplyr::ungroup(x)
-
-  mode <- match.arg(mode, c("inner", "left", "right", "full", "semi", "anti"))
 
   match_fun_type <- c("match_fun", "multi_match_fun", "index_match_fun")[
     c(!is.null(match_fun), !is.null(multi_match_fun), !is.null(index_match_fun))
