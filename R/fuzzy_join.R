@@ -76,16 +76,30 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
 
   matches <- complete_matches(matches, mode, nrow(x), nrow(y))
 
+  ret <- build_output(x, y, matches, mode)
+  ret <- regroup(ret)
+
+  # Base the type (data.frame vs tbl_df) on x, not on y
+  if (!inherits(x, "tbl_df")) {
+    ret <- as.data.frame(ret)
+  }
+
+  ret
+}
+
+
+build_output <- function(x, y, matches, mode) {
   if (mode == "semi") {
     # just use the x indices to include
-    return(regroup(x[sort(unique(matches$x)), , drop = FALSE]))
+    return(x[sort(unique(matches$x)), , drop = FALSE])
   }
+
   if (mode == "anti") {
     if (nrow(matches) == 0) {
-      return(regroup(x))
+      return(x)
     }
     # just use the x indices to exclude
-    return(regroup(x[-sort(unique(matches$x)), , drop = FALSE]))
+    return(x[-sort(unique(matches$x)), , drop = FALSE])
   }
 
   # in cases where columns share a name, rename each to .x and .y
@@ -98,20 +112,15 @@ fuzzy_join <- function(x, y, by = NULL, match_fun = NULL,
     unrowwname(y[matches$y, , drop = FALSE])
   )
 
+  # bind extra columns
   if (ncol(matches) > 2) {
     extra_cols <- unrowwname(matches[, -(1:2), drop = FALSE])
     ret <- dplyr::bind_cols(ret, extra_cols)
   }
 
-  ret <- regroup(ret)
-
-  # Base the type (data.frame vs tbl_df) on x, not on y
-  if (!inherits(x, "tbl_df")) {
-    ret <- as.data.frame(ret)
-  }
-
   ret
 }
+
 
 
 #' @rdname fuzzy_join
