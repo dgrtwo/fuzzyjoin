@@ -15,78 +15,8 @@ get_matches <- function(x, y, by, match_fun, ...) {
     stop("Length of match_fun not equal to columns specified in 'by'.", call. = FALSE)
   }
 
-  matches <- dplyr::bind_rows(lapply(seq_along(by$x), function(i) {
-    col_x <- x[[by$x[i]]]
-    col_y <- y[[by$y[i]]]
-
-    indices_x <- tibble::tibble(
-      col = col_x,
-      indices = seq_along(col_x)
-    ) %>%
-      dplyr::group_by(col) %>%
-      tidyr::nest() %>%
-      dplyr::mutate(indices = purrr::map(data, "indices"))
-
-    indices_y <- tibble::tibble(
-      col = col_y,
-      indices = seq_along(col_y)
-    ) %>%
-      dplyr::group_by(col) %>%
-      tidyr::nest() %>%
-      dplyr::mutate(indices = purrr::map(data, "indices"))
-
-    u_x <- indices_x$col
-    u_y <- indices_y$col
-
-    if (!is.null(names(match_fun))) {
-      # match_fun is a named list, use the names in x
-      mf <- match_fun[[by$x[[i]]]]
-    } else {
-      mf <- match_fun[[i]]
-    }
-
-    extra_cols <- NULL
-
-    n_x <- length(u_x)
-    n_y <- length(u_y)
-    m <- mf(rep(u_x, n_y), rep(u_y, each = n_x), ...)
-
-    if (is.data.frame(m)) {
-      if (ncol(m) > 1) {
-        # first column is logical, others are included as distance columns
-        extra_cols <- m[, -1, drop = FALSE]
-      }
-      m <- m[[1]]
-    }
-
-    # return as a data frame of x and y indices that match
-    w <- which(m) - 1
-
-    if (length(w) == 0) {
-      # there are no matches
-      ret <- tibble::tibble(i = numeric(0), x = numeric(0), y = numeric(0))
-      return(ret)
-    }
-
-    x_indices_l <- indices_x$indices[w %% n_x + 1]
-    y_indices_l <- indices_y$indices[w %/% n_x + 1]
-
-    xls <- sapply(x_indices_l, length)
-    yls <- sapply(y_indices_l, length)
-
-    x_rep <- unlist(purrr::map2(x_indices_l, yls, function(x, y) rep(x, each = y)))
-    y_rep <- unlist(purrr::map2(y_indices_l, xls, function(y, x) rep(y, x)))
-
-    ret <- tibble::tibble(i = i, x = x_rep, y = y_rep)
-
-    if (!is.null(extra_cols)) {
-      extra_indices <- rep(w, xls * yls)
-      extra_cols_rep <- extra_cols[extra_indices + 1, , drop = FALSE]
-      ret <- dplyr::bind_cols(ret, extra_cols_rep)
-    }
-
-    ret
-  }))
+  # for each pair of key columns build a match data frame, and bind them
+  matches <- purrr::map_dfr(seq_along(by$x), get_matches1, x, y, by, match_fun, ...)
 
   if (length(by$x) > 1) {
     # only take cases where all pairs have matches
@@ -187,4 +117,78 @@ get_matches_index <- function(x, y, by, index_match_fun, multi_by) {
 
   matches <- index_match_fun(d1, d2)
   matches
+}
+
+
+get_matches1 <- function(i, x, y, by, match_fun, ...) {
+  col_x <- x[[by$x[i]]]
+  col_y <- y[[by$y[i]]]
+
+  indices_x <- tibble::tibble(
+    col = col_x,
+    indices = seq_along(col_x)
+  ) %>%
+    dplyr::group_by(col) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(indices = purrr::map(data, "indices"))
+
+  indices_y <- tibble::tibble(
+    col = col_y,
+    indices = seq_along(col_y)
+  ) %>%
+    dplyr::group_by(col) %>%
+    tidyr::nest() %>%
+    dplyr::mutate(indices = purrr::map(data, "indices"))
+
+  u_x <- indices_x$col
+  u_y <- indices_y$col
+
+  if (!is.null(names(match_fun))) {
+    # match_fun is a named list, use the names in x
+    mf <- match_fun[[by$x[[i]]]]
+  } else {
+    mf <- match_fun[[i]]
+  }
+
+  extra_cols <- NULL
+
+  n_x <- length(u_x)
+  n_y <- length(u_y)
+  m <- mf(rep(u_x, n_y), rep(u_y, each = n_x), ...)
+
+  if (is.data.frame(m)) {
+    if (ncol(m) > 1) {
+      # first column is logical, others are included as distance columns
+      extra_cols <- m[, -1, drop = FALSE]
+    }
+    m <- m[[1]]
+  }
+
+  # return as a data frame of x and y indices that match
+  w <- which(m) - 1
+
+  if (length(w) == 0) {
+    # there are no matches
+    ret <- tibble::tibble(i = numeric(0), x = numeric(0), y = numeric(0))
+    return(ret)
+  }
+
+  x_indices_l <- indices_x$indices[w %% n_x + 1]
+  y_indices_l <- indices_y$indices[w %/% n_x + 1]
+
+  xls <- sapply(x_indices_l, length)
+  yls <- sapply(y_indices_l, length)
+
+  x_rep <- unlist(purrr::map2(x_indices_l, yls, function(x, y) rep(x, each = y)))
+  y_rep <- unlist(purrr::map2(y_indices_l, xls, function(y, x) rep(y, x)))
+
+  ret <- tibble::tibble(i = i, x = x_rep, y = y_rep)
+
+  if (!is.null(extra_cols)) {
+    extra_indices <- rep(w, xls * yls)
+    extra_cols_rep <- extra_cols[extra_indices + 1, , drop = FALSE]
+    ret <- dplyr::bind_cols(ret, extra_cols_rep)
+  }
+
+  ret
 }
