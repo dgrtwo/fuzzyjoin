@@ -6,15 +6,13 @@ fuzzyjoin: Join data frames on inexact matching
 ------------------
 
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/fuzzyjoin)](https://cran.r-project.org/package=fuzzyjoin)
-[![Travis-CI Build Status](https://travis-ci.org/dgrtwo/fuzzyjoin.svg?branch=master)](https://travis-ci.org/dgrtwo/fuzzyjoin)
 [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/dgrtwo/fuzzyjoin?branch=master&svg=true)](https://ci.appveyor.com/project/dgrtwo/fuzzyjoin)
-[![Coverage Status](https://img.shields.io/codecov/c/github/dgrtwo/fuzzyjoin/master.svg)](https://codecov.io/github/dgrtwo/fuzzyjoin?branch=master)
-
+[![Coverage Status](https://img.shields.io/codecov/c/github/dgrtwo/fuzzyjoin/master.svg)](https://app.codecov.io/github/dgrtwo/fuzzyjoin?branch=master)
 
 The fuzzyjoin package is a variation on dplyr's join operations that allows matching not just on values that match between columns, but on inexact matching. This allows matching on:
 
 * Numeric values that are within some tolerance (`difference_inner_join`)
-* Strings that are similar in Levenshtein/cosine/Jaccard distance, or [other metrics](http://finzi.psych.upenn.edu/library/stringdist/html/stringdist-metrics.html) from the [stringdist](https://cran.r-project.org/package=stringdist) package (`stringdist_inner_join`)
+* Strings that are similar in Levenshtein/cosine/Jaccard distance, or [other metrics](https://search.r-project.org/CRAN/refmans/stringdist/html/stringdist-metrics.html) from the [stringdist](https://cran.r-project.org/package=stringdist) package (`stringdist_inner_join`)
 * A regular expression in one column matching to another (`regex_inner_join`)
 * Euclidean or Manhattan distance across multiple columns (`distance_inner_join`)
 * Geographic distance based on longitude and latitude (`geo_inner_join`)
@@ -64,7 +62,7 @@ library(fuzzyjoin)
 data(misspellings)
 
 misspellings
-#> # A tibble: 4,505 x 2
+#> # A tibble: 4,505 × 2
 #>    misspelling correct   
 #>    <chr>       <chr>     
 #>  1 abandonned  abandoned 
@@ -77,7 +75,7 @@ misspellings
 #>  8 abouta      about a   
 #>  9 aboutit     about it  
 #> 10 aboutthe    about the 
-#> # … with 4,495 more rows
+#> # ℹ 4,495 more rows
 ```
 
 
@@ -88,7 +86,7 @@ library(qdapDictionaries)
 words <- tbl_df(DICTIONARY)
 
 words
-#> # A tibble: 20,137 x 2
+#> # A tibble: 20,137 × 2
 #>    word  syllables
 #>    <chr>     <dbl>
 #>  1 hm            1
@@ -101,7 +99,7 @@ words
 #>  8 mmm           1
 #>  9 mmmm          1
 #> 10 pff           1
-#> # … with 20,127 more rows
+#> # ℹ 20,127 more rows
 ```
 
 As an example, we'll pick 1000 of these words (you could try it on all of them though), and use `stringdist_inner_join` to join them against our dictionary.
@@ -124,20 +122,20 @@ By default, `stringdist_inner_join` uses optimal string alignment (Damerau–Lev
 
 ```r
 joined
-#> # A tibble: 728 x 4
-#>    misspelling correct word    syllables
-#>    <chr>       <chr>   <chr>       <dbl>
-#>  1 sould       should  could           1
-#>  2 sould       should  should          1
-#>  3 sould       should  sold            1
-#>  4 sould       should  soul            1
-#>  5 sould       should  sound           1
-#>  6 sould       should  would           1
-#>  7 fiels       feels   field           1
-#>  8 fiels       feels   fils            1
-#>  9 conscent    consent consent         2
-#> 10 fleed       freed   bleed           1
-#> # … with 718 more rows
+#> # A tibble: 760 × 4
+#>    misspelling correct    word       syllables
+#>    <chr>       <chr>      <chr>          <dbl>
+#>  1 cyclinder   cylinder   cylinder           3
+#>  2 beastiality bestiality bestiality         5
+#>  3 affilate    affiliate  affiliate          4
+#>  4 supress     suppress   suppress           2
+#>  5 intevene    intervene  intervene          3
+#>  6 resaurant   restaurant restaurant         3
+#>  7 univesity   university university         5
+#>  8 allegedely  allegedly  allegedly          4
+#>  9 emiting     emitting   smiting            2
+#> 10 probaly     probably   probably           3
+#> # ℹ 750 more rows
 ```
 
 #### Classification accuracy
@@ -148,20 +146,20 @@ Note that there are some redundancies; words that could be multiple items in the
 ```r
 joined %>%
   count(misspelling, correct)
-#> # A tibble: 455 x 3
-#>    misspelling correct          n
-#>    <chr>       <chr>        <int>
-#>  1 abritrary   arbitrary        1
-#>  2 accademic   academic         1
-#>  3 accension   ascension        2
-#>  4 accessable  accessible       1
-#>  5 accidant    accident         1
-#>  6 accidentaly accidentally     1
-#>  7 accordeon   accordion        1
-#>  8 addopt      adopt            1
-#>  9 addtional   additional       1
-#> 10 admendment  amendment        1
-#> # … with 445 more rows
+#> # A tibble: 462 × 3
+#>    misspelling correct         n
+#>    <chr>       <chr>       <int>
+#>  1 abilty      ability         1
+#>  2 accademic   academic        1
+#>  3 accademy    academy         1
+#>  4 accension   accession       2
+#>  5 acceptence  acceptance      1
+#>  6 acedemic    academic        1
+#>  7 achive      achieve         4
+#>  8 acommodate  accommodate     1
+#>  9 acuracy     accuracy        1
+#> 10 addmission  admission       1
+#> # ℹ 452 more rows
 ```
 
 So we found a match in the dictionary for about half of the misspellings. In how many of the ones we classified did we get at least one of our guesses right?
@@ -173,29 +171,29 @@ which_correct <- joined %>%
   summarize(guesses = n(), one_correct = any(correct == word))
 
 which_correct
-#> # A tibble: 455 x 4
-#> # Groups:   misspelling [444]
-#>    misspelling correct      guesses one_correct
-#>    <chr>       <chr>          <int> <lgl>      
-#>  1 abritrary   arbitrary          1 TRUE       
-#>  2 accademic   academic           1 TRUE       
-#>  3 accension   ascension          2 TRUE       
-#>  4 accessable  accessible         1 TRUE       
-#>  5 accidant    accident           1 TRUE       
-#>  6 accidentaly accidentally       1 FALSE      
-#>  7 accordeon   accordion          1 TRUE       
-#>  8 addopt      adopt              1 TRUE       
-#>  9 addtional   additional         1 TRUE       
-#> 10 admendment  amendment          1 TRUE       
-#> # … with 445 more rows
+#> # A tibble: 462 × 4
+#> # Groups:   misspelling [453]
+#>    misspelling correct     guesses one_correct
+#>    <chr>       <chr>         <int> <lgl>      
+#>  1 abilty      ability           1 TRUE       
+#>  2 accademic   academic          1 TRUE       
+#>  3 accademy    academy           1 TRUE       
+#>  4 accension   accession         2 TRUE       
+#>  5 acceptence  acceptance        1 TRUE       
+#>  6 acedemic    academic          1 TRUE       
+#>  7 achive      achieve           4 TRUE       
+#>  8 acommodate  accommodate       1 TRUE       
+#>  9 acuracy     accuracy          1 TRUE       
+#> 10 addmission  admission         1 TRUE       
+#> # ℹ 452 more rows
 
 # percentage of guesses getting at least one right
 mean(which_correct$one_correct)
-#> [1] 0.8527473
+#> [1] 0.8246753
 
 # number uniquely correct (out of the original 1000)
 sum(which_correct$guesses == 1 & which_correct$one_correct)
-#> [1] 294
+#> [1] 290
 ```
 
 Not bad.
@@ -211,20 +209,20 @@ joined_dists <- sub_misspellings %>%
                         distance_col = "distance")
 
 joined_dists
-#> # A tibble: 7,427 x 5
-#>    misspelling correct    word       syllables distance
-#>    <chr>       <chr>      <chr>          <dbl>    <dbl>
-#>  1 charactors  characters character          3        2
-#>  2 charactors  characters charactery         4        2
-#>  3 sould       should     auld               1        2
-#>  4 sould       should     bold               1        2
-#>  5 sould       should     bound              1        2
-#>  6 sould       should     cold               1        2
-#>  7 sould       should     could              1        1
-#>  8 sould       should     fold               1        2
-#>  9 sould       should     foul               1        2
-#> 10 sould       should     found              1        2
-#> # … with 7,417 more rows
+#> # A tibble: 8,435 × 5
+#>    misspelling   correct     word          syllables distance
+#>    <chr>         <chr>       <chr>             <dbl>    <dbl>
+#>  1 cyclinder     cylinder    cylinder              3        1
+#>  2 beastiality   bestiality  bestiality            5        1
+#>  3 affilate      affiliate   affiliate             4        1
+#>  4 comitted      committed   committee             3        2
+#>  5 acquited      acquitted   acquire               2        2
+#>  6 acquited      acquitted   acquit                2        2
+#>  7 decompositing decomposing decomposition         5        2
+#>  8 decieved      deceived    deceive               2        2
+#>  9 asociated     associated  associate             4        2
+#> 10 supress       suppress    cypress               2        2
+#> # ℹ 8,425 more rows
 ```
 
 Note the extra `distance` column, which in this case will always be less than or equal to 2. We could then pick the closest match for each, and examine how many of our closest matches were 1 or 2 away:
@@ -237,29 +235,29 @@ closest <- joined_dists %>%
   ungroup()
 
 closest
-#> # A tibble: 1,437 x 5
-#>    misspelling  correct      word        syllables distance
-#>    <chr>        <chr>        <chr>           <dbl>    <dbl>
-#>  1 charactors   characters   character           3        2
-#>  2 charactors   characters   charactery          4        2
-#>  3 sould        should       could               1        1
-#>  4 sould        should       should              1        1
-#>  5 sould        should       sold                1        1
-#>  6 sould        should       soul                1        1
-#>  7 sould        should       sound               1        1
-#>  8 sould        should       would               1        1
-#>  9 incorportaed incorporated incorporate         4        2
-#> 10 awya         away         aa                  2        2
-#> # … with 1,427 more rows
+#> # A tibble: 1,336 × 5
+#>    misspelling   correct     word          syllables distance
+#>    <chr>         <chr>       <chr>             <dbl>    <dbl>
+#>  1 cyclinder     cylinder    cylinder              3        1
+#>  2 beastiality   bestiality  bestiality            5        1
+#>  3 affilate      affiliate   affiliate             4        1
+#>  4 comitted      committed   committee             3        2
+#>  5 acquited      acquitted   acquire               2        2
+#>  6 acquited      acquitted   acquit                2        2
+#>  7 decompositing decomposing decomposition         5        2
+#>  8 decieved      deceived    deceive               2        2
+#>  9 asociated     associated  associate             4        2
+#> 10 supress       suppress    suppress              2        1
+#> # ℹ 1,326 more rows
 
 closest %>%
   count(distance)
-#> # A tibble: 3 x 2
+#> # A tibble: 3 × 2
 #>   distance     n
 #>      <dbl> <int>
-#> 1        0     1
-#> 2        1   725
-#> 3        2   711
+#> 1        0     3
+#> 2        1   739
+#> 3        2   594
 ```
 
 #### Other joining functions
@@ -272,37 +270,37 @@ left_joined <- sub_misspellings %>%
   stringdist_left_join(words, by = c(misspelling = "word"), max_dist = 1)
 
 left_joined
-#> # A tibble: 1,273 x 4
-#>    misspelling  correct      word   syllables
-#>    <chr>        <chr>        <chr>      <dbl>
-#>  1 charactors   characters   <NA>          NA
-#>  2 Brasillian   Brazilian    <NA>          NA
-#>  3 sould        should       could          1
-#>  4 sould        should       should         1
-#>  5 sould        should       sold           1
-#>  6 sould        should       soul           1
-#>  7 sould        should       sound          1
-#>  8 sould        should       would          1
-#>  9 belligerant  belligerent  <NA>          NA
-#> 10 incorportaed incorporated <NA>          NA
-#> # … with 1,263 more rows
+#> # A tibble: 1,298 × 4
+#>    misspelling   correct       word       syllables
+#>    <chr>         <chr>         <chr>          <dbl>
+#>  1 Sanhedrim     Sanhedrin     <NA>              NA
+#>  2 cyclinder     cylinder      cylinder           3
+#>  3 beastiality   bestiality    bestiality         5
+#>  4 consicousness consciousness <NA>              NA
+#>  5 affilate      affiliate     affiliate          4
+#>  6 repubicans    republicans   <NA>              NA
+#>  7 comitted      committed     <NA>              NA
+#>  8 emmisions     emissions     <NA>              NA
+#>  9 acquited      acquitted     <NA>              NA
+#> 10 decompositing decomposing   <NA>              NA
+#> # ℹ 1,288 more rows
 
 left_joined %>%
   filter(is.na(word))
-#> # A tibble: 545 x 4
-#>    misspelling  correct      word  syllables
-#>    <chr>        <chr>        <chr>     <dbl>
-#>  1 charactors   characters   <NA>         NA
-#>  2 Brasillian   Brazilian    <NA>         NA
-#>  3 belligerant  belligerent  <NA>         NA
-#>  4 incorportaed incorporated <NA>         NA
-#>  5 awya         away         <NA>         NA
-#>  6 occuring     occurring    <NA>         NA
-#>  7 surveilence  surveillance <NA>         NA
-#>  8 abondoned    abandoned    <NA>         NA
-#>  9 alledges     alleges      <NA>         NA
-#> 10 deliberatly  deliberately <NA>         NA
-#> # … with 535 more rows
+#> # A tibble: 538 × 4
+#>    misspelling   correct       word  syllables
+#>    <chr>         <chr>         <chr>     <dbl>
+#>  1 Sanhedrim     Sanhedrin     <NA>         NA
+#>  2 consicousness consciousness <NA>         NA
+#>  3 repubicans    republicans   <NA>         NA
+#>  4 comitted      committed     <NA>         NA
+#>  5 emmisions     emissions     <NA>         NA
+#>  6 acquited      acquitted     <NA>         NA
+#>  7 decompositing decomposing   <NA>         NA
+#>  8 decieved      deceived      <NA>         NA
+#>  9 asociated     associated    <NA>         NA
+#> 10 commonweath   commonwealth  <NA>         NA
+#> # ℹ 528 more rows
 ```
 
 (To get *just* the ones without matches immediately, we could have used `stringdist_anti_join`). If we increase our distance threshold, we'll increase the fraction with a correct guess, but also get more false positive guesses:
@@ -313,37 +311,37 @@ left_joined2 <- sub_misspellings %>%
   stringdist_left_join(words, by = c(misspelling = "word"), max_dist = 2)
 
 left_joined2
-#> # A tibble: 7,691 x 4
-#>    misspelling correct    word       syllables
-#>    <chr>       <chr>      <chr>          <dbl>
-#>  1 charactors  characters character          3
-#>  2 charactors  characters charactery         4
-#>  3 Brasillian  Brazilian  <NA>              NA
-#>  4 sould       should     auld               1
-#>  5 sould       should     bold               1
-#>  6 sould       should     bound              1
-#>  7 sould       should     cold               1
-#>  8 sould       should     could              1
-#>  9 sould       should     fold               1
-#> 10 sould       should     foul               1
-#> # … with 7,681 more rows
+#> # A tibble: 8,721 × 4
+#>    misspelling   correct       word       syllables
+#>    <chr>         <chr>         <chr>          <dbl>
+#>  1 Sanhedrim     Sanhedrin     <NA>              NA
+#>  2 cyclinder     cylinder      cylinder           3
+#>  3 beastiality   bestiality    bestiality         5
+#>  4 consicousness consciousness <NA>              NA
+#>  5 affilate      affiliate     affiliate          4
+#>  6 repubicans    republicans   <NA>              NA
+#>  7 comitted      committed     committee          3
+#>  8 emmisions     emissions     <NA>              NA
+#>  9 acquited      acquitted     acquire            2
+#> 10 acquited      acquitted     acquit             2
+#> # ℹ 8,711 more rows
 
 left_joined2 %>%
   filter(is.na(word))
-#> # A tibble: 264 x 4
-#>    misspelling   correct       word  syllables
-#>    <chr>         <chr>         <chr>     <dbl>
-#>  1 Brasillian    Brazilian     <NA>         NA
-#>  2 belligerant   belligerent   <NA>         NA
-#>  3 occuring      occurring     <NA>         NA
-#>  4 abondoned     abandoned     <NA>         NA
-#>  5 correponding  corresponding <NA>         NA
-#>  6 archeaologist archaeologist <NA>         NA
-#>  7 emmediately   immediately   <NA>         NA
-#>  8 possessess    possesses     <NA>         NA
-#>  9 unahppy       unhappy       <NA>         NA
-#> 10 Guilio        Giulio        <NA>         NA
-#> # … with 254 more rows
+#> # A tibble: 286 × 4
+#>    misspelling   correct        word  syllables
+#>    <chr>         <chr>          <chr>     <dbl>
+#>  1 Sanhedrim     Sanhedrin      <NA>         NA
+#>  2 consicousness consciousness  <NA>         NA
+#>  3 repubicans    republicans    <NA>         NA
+#>  4 emmisions     emissions      <NA>         NA
+#>  5 commonweath   commonwealth   <NA>         NA
+#>  6 supressed     suppressed     <NA>         NA
+#>  7 aproximately  approximately  <NA>         NA
+#>  8 Missisippi    Mississippi    <NA>         NA
+#>  9 lazyness      laziness       <NA>         NA
+#> 10 constituional constitutional <NA>         NA
+#> # ℹ 276 more rows
 ```
 
 Most of the missing words here simply aren't in our dictionary.
@@ -367,20 +365,20 @@ passages <- tibble(text = prideprejudice) %>%
   summarize(text = paste(text, collapse = " "))
 
 passages
-#> # A tibble: 261 x 2
-#>    passage text                                                            
-#>      <dbl> <chr>                                                           
-#>  1       1 "PRIDE AND PREJUDICE  By Jane Austen    Chapter 1   It is a tru…
-#>  2       2 "\"How so? How can it affect them?\"  \"My dear Mr. Bennet,\" r…
-#>  3       3 "are my old friends. I have heard you mention them with conside…
-#>  4       4 "herself, began scolding one of her daughters.  \"Don't keep co…
-#>  5       5 " The astonishment of the ladies was just what he wished; that …
-#>  6       6 "married, I shall have nothing to wish for.\"  In a few days Mr…
-#>  7       7 "introduced to any other lady, and spent the rest of the evenin…
-#>  8       8 "party. Mr. Bingley had danced with her twice, and she had been…
-#>  9       9 "  Chapter 4   When Jane and Elizabeth were alone, the former, …
-#> 10      10 Elizabeth listened in silence, but was not convinced; their beh…
-#> # … with 251 more rows
+#> # A tibble: 261 × 2
+#>    passage text                                                                                                
+#>      <dbl> <chr>                                                                                               
+#>  1       1 "PRIDE AND PREJUDICE  By Jane Austen    Chapter 1   It is a truth universally acknowledged, that a …
+#>  2       2 "\"How so? How can it affect them?\"  \"My dear Mr. Bennet,\" replied his wife, \"how can you be so…
+#>  3       3 "are my old friends. I have heard you mention them with consideration these last twenty years at le…
+#>  4       4 "herself, began scolding one of her daughters.  \"Don't keep coughing so, Kitty, for Heaven's sake!…
+#>  5       5 " The astonishment of the ladies was just what he wished; that of Mrs. Bennet perhaps surpassing th…
+#>  6       6 "married, I shall have nothing to wish for.\"  In a few days Mr. Bingley returned Mr. Bennet's visi…
+#>  7       7 "introduced to any other lady, and spent the rest of the evening in walking about the room, speakin…
+#>  8       8 "party. Mr. Bingley had danced with her twice, and she had been distinguished by his sisters. Jane …
+#>  9       9 "  Chapter 4   When Jane and Elizabeth were alone, the former, who had been cautious in her praise …
+#> 10      10 "Elizabeth listened in silence, but was not convinced; their behaviour at the assembly had not been…
+#> # ℹ 251 more rows
 ```
 
 Suppose we wanted to divide the passages based on which character's name is mentioned in each. Character's names may differ in how they are presented, so we construct a regular expression for each and pair it with that character's name.
@@ -422,20 +420,20 @@ This combines the two data frames based on cases where the `passages$text` colum
 ```r
 character_passages %>%
   select(passage, character, text)
-#> # A tibble: 1,126 x 3
-#>    passage character      text                                             
-#>      <dbl> <chr>          <chr>                                            
-#>  1       1 Mr. Bennet     "PRIDE AND PREJUDICE  By Jane Austen    Chapter …
-#>  2       1 Jane           "PRIDE AND PREJUDICE  By Jane Austen    Chapter …
-#>  3       2 Mr. Bennet     "\"How so? How can it affect them?\"  \"My dear …
-#>  4       2 Jane           "\"How so? How can it affect them?\"  \"My dear …
-#>  5       2 Lydia          "\"How so? How can it affect them?\"  \"My dear …
-#>  6       2 Charlotte Luc… "\"How so? How can it affect them?\"  \"My dear …
-#>  7       3 Elizabeth      "are my old friends. I have heard you mention th…
-#>  8       3 Mr. Bennet     "are my old friends. I have heard you mention th…
-#>  9       3 Mrs. Bennet    "are my old friends. I have heard you mention th…
-#> 10       4 Mr. Bennet     "herself, began scolding one of her daughters.  …
-#> # … with 1,116 more rows
+#> # A tibble: 1,126 × 3
+#>    passage character       text                                                                                
+#>      <dbl> <chr>           <chr>                                                                               
+#>  1       1 Mr. Bennet      "PRIDE AND PREJUDICE  By Jane Austen    Chapter 1   It is a truth universally ackno…
+#>  2       1 Jane            "PRIDE AND PREJUDICE  By Jane Austen    Chapter 1   It is a truth universally ackno…
+#>  3       2 Mr. Bennet      "\"How so? How can it affect them?\"  \"My dear Mr. Bennet,\" replied his wife, \"h…
+#>  4       2 Jane            "\"How so? How can it affect them?\"  \"My dear Mr. Bennet,\" replied his wife, \"h…
+#>  5       2 Lydia           "\"How so? How can it affect them?\"  \"My dear Mr. Bennet,\" replied his wife, \"h…
+#>  6       2 Charlotte Lucas "\"How so? How can it affect them?\"  \"My dear Mr. Bennet,\" replied his wife, \"h…
+#>  7       3 Elizabeth       "are my old friends. I have heard you mention them with consideration these last tw…
+#>  8       3 Mr. Bennet      "are my old friends. I have heard you mention them with consideration these last tw…
+#>  9       3 Mrs. Bennet     "are my old friends. I have heard you mention them with consideration these last tw…
+#> 10       4 Mr. Bennet      "herself, began scolding one of her daughters.  \"Don't keep coughing so, Kitty, fo…
+#> # ℹ 1,116 more rows
 ```
 
 This shows that Mr. Bennet's name appears in passages 1, 2, 4, and 6, while Charlotte Lucas's appears in 3. Notice that having fuzzy-joined the datasets, some passages will end up duplicated (those with multiple names in them), while it's possible others will be missing entirely (those without names).
@@ -446,7 +444,7 @@ We could ask which characters are mentioned in the most passages:
 ```r
 character_passages %>%
   count(character, sort = TRUE)
-#> # A tibble: 14 x 2
+#> # A tibble: 14 × 2
 #>    character                    n
 #>    <chr>                    <int>
 #>  1 Elizabeth                  227

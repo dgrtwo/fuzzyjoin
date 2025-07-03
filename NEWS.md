@@ -1,6 +1,7 @@
 # fuzzyjoin 0.1.7
 
 * fixing documentation to keep it on CRAN.
+* Removed Travis badge (no longer works); fixed links
 
 # fuzzyjoin 0.1.6
 
