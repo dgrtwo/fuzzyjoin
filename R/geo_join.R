@@ -36,9 +36,9 @@
 #'
 #' # find pairs of US states whose centers are within
 #' # 200 miles of each other
-#' states <- data_frame(state = state.name,
-#'                      longitude = state.center$x,
-#'                      latitude = state.center$y)
+#' states <- tibble::tibble(state = state.name,
+#'                          longitude = state.center$x,
+#'                          latitude = state.center$y)
 #'
 #' s1 <- rename(states, state1 = state)
 #' s2 <- rename(states, state2 = state)

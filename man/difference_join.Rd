@@ -53,7 +53,7 @@ Join two tables based on absolute difference between their columns
 library(dplyr)
 
 head(iris)
-sepal_lengths <- data_frame(Sepal.Length = c(5, 6, 7), Type = 1:3)
+sepal_lengths <- tibble::tibble(Sepal.Length = c(5, 6, 7), Type = 1:3)
 
 iris \%>\%
   difference_inner_join(sepal_lengths, max_dist = .5)

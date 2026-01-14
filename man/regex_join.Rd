@@ -46,10 +46,10 @@ library(dplyr)
 library(ggplot2)
 data(diamonds)
 
-diamonds <- tbl_df(diamonds)
+diamonds <- tibble::as_tibble(diamonds)
 
-d <- data_frame(regex_name = c("^Idea", "mium", "Good"),
-                type = 1:3)
+d <- tibble::tibble(regex_name = c("^Idea", "mium", "Good"),
+                    type = 1:3)
 
 # When they are inner_joined, only Good<->Good matches
 diamonds \%>\%

@@ -21,7 +21,7 @@
 #' library(dplyr)
 #'
 #' head(iris)
-#' sepal_lengths <- data_frame(Sepal.Length = c(5, 6, 7),
+#' sepal_lengths <- tibble::tibble(Sepal.Length = c(5, 6, 7),
 #'                             Sepal.Width = 1:3)
 #'
 #' iris %>%
