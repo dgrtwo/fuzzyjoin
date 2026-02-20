@@ -50,12 +50,12 @@
 #' pairs
 #'
 #' # plot them
-#' library(ggplot2)
-#' ggplot(pairs, aes(x = longitude.x, y = latitude.x,
-#'                   xend = longitude.y, yend = latitude.y)) +
-#'   geom_segment(color = "red") +
-#'   annotation_borders("state") +
-#'   theme_void()
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   ggplot2::ggplot(pairs, ggplot2::aes(x = longitude.x, y = latitude.x,
+#'                                       xend = longitude.y, yend = latitude.y)) +
+#'     ggplot2::geom_segment(color = "red") +
+#'     ggplot2::theme_void()
+#' }
 #'
 #' # also get distances
 #' s1 %>%

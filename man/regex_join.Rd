@@ -43,21 +43,20 @@ table
 \examples{
 
 library(dplyr)
-library(ggplot2)
-data(diamonds)
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  diamonds <- tibble::as_tibble(ggplot2::diamonds)
 
-diamonds <- tibble::as_tibble(diamonds)
+  d <- tibble::tibble(regex_name = c("^Idea", "mium", "Good"),
+                  type = 1:3)
 
-d <- tibble::tibble(regex_name = c("^Idea", "mium", "Good"),
-                type = 1:3)
+  # When they are inner_joined, only Good<->Good matches
+  diamonds \%>\%
+    inner_join(d, by = c(cut = "regex_name"))
 
-# When they are inner_joined, only Good<->Good matches
-diamonds \%>\%
-  inner_join(d, by = c(cut = "regex_name"))
-
-# but we can regex match them
-diamonds \%>\%
- regex_inner_join(d, by = c(cut = "regex_name"))
+  # but we can regex match them
+  diamonds \%>\%
+   regex_inner_join(d, by = c(cut = "regex_name"))
+}
 
 }
 \seealso{

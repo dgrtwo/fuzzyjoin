@@ -68,19 +68,20 @@ If \code{method = "soundex"}, the \code{max_dist} is automatically
 \examples{
 
 library(dplyr)
-library(ggplot2)
-data(diamonds)
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  diamonds <- tibble::as_tibble(ggplot2::diamonds)
 
-d <- tibble::tibble(approximate_name = c("Idea", "Premiums", "Premioom",
-                                     "VeryGood", "VeryGood", "Faiir"),
-                type = 1:6)
+  d <- tibble::tibble(approximate_name = c("Idea", "Premiums", "Premioom",
+                                       "VeryGood", "VeryGood", "Faiir"),
+                  type = 1:6)
 
-# no matches when they are inner-joined:
-diamonds \%>\%
-  inner_join(d, by = c(cut = "approximate_name"))
+  # no matches when they are inner-joined:
+  diamonds \%>\%
+    inner_join(d, by = c(cut = "approximate_name"))
 
-# but we can match when they're fuzzy joined
-diamonds \%>\%
- stringdist_inner_join(d, by = c(cut = "approximate_name"))
+  # but we can match when they're fuzzy joined
+  diamonds \%>\%
+   stringdist_inner_join(d, by = c(cut = "approximate_name"))
+}
 
 }

@@ -6,6 +6,12 @@ d <- tibble::tibble(
   ) %>%
   dplyr::mutate(type = dplyr::row_number())
 
+if (!requireNamespace("ggplot2", quietly = TRUE)) {
+  testthat::skip("ggplot2 not installed")
+}
+
+diamonds <- tibble::as_tibble(ggplot2::diamonds)
+
 test_that("stringdist_inner_join works on a large df with multiples in each", {
   # create something with names close to the cut column in the diamonds dataset
   j <- stringdist_inner_join(diamonds, d, by = c(cut = "cut2"), distance_col = "distance")
@@ -332,4 +338,3 @@ test_that("stringdist_ joins where there are no overlapping rows still get a dis
   result <- stringdist_anti_join(a, b, by = c(x = "y"), max_dist = 1, distance_col = "distance")
   expect_equal(a, result)
 })
-

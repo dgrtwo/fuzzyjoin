@@ -22,20 +22,21 @@
 #' @examples
 #'
 #' library(dplyr)
-#' library(ggplot2)
-#' data(diamonds)
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   diamonds <- tibble::as_tibble(ggplot2::diamonds)
 #'
-#' d <- tibble::tibble(approximate_name = c("Idea", "Premiums", "Premioom",
-#'                                      "VeryGood", "VeryGood", "Faiir"),
-#'                 type = 1:6)
+#'   d <- tibble::tibble(approximate_name = c("Idea", "Premiums", "Premioom",
+#'                                        "VeryGood", "VeryGood", "Faiir"),
+#'                   type = 1:6)
 #'
-#' # no matches when they are inner-joined:
-#' diamonds %>%
-#'   inner_join(d, by = c(cut = "approximate_name"))
+#'   # no matches when they are inner-joined:
+#'   diamonds %>%
+#'     inner_join(d, by = c(cut = "approximate_name"))
 #'
-#' # but we can match when they're fuzzy joined
-#' diamonds %>%
-#'  stringdist_inner_join(d, by = c(cut = "approximate_name"))
+#'   # but we can match when they're fuzzy joined
+#'   diamonds %>%
+#'    stringdist_inner_join(d, by = c(cut = "approximate_name"))
+#' }
 #'
 #' @export
 stringdist_join <- function(x, y, by = NULL, max_dist = 2,
