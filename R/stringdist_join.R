@@ -8,7 +8,7 @@
 #' @param y A tbl.
 #' @param by Columns by which to join the two tables.
 #' @param max_dist Maximum distance to use for joining.
-#' @param ignore_case Whether to be case insensitive (default yes).
+#' @param ignore_case Whether to be case insensitive (default no).
 #' @param method Method for computing string distance, see.
 #'   \code{stringdist-metrics} in the stringdist package.
 #' @param distance_col If given, will add a column with this name containing the
