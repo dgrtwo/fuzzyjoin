@@ -49,7 +49,7 @@ stringdist_anti_join(x, y, by = NULL, distance_col = NULL, ...)
 
 \item{mode}{One of "inner", "left", "right", "full" "semi", or "anti"}
 
-\item{ignore_case}{Whether to be case insensitive (default yes).}
+\item{ignore_case}{Whether to be case insensitive (default no).}
 
 \item{distance_col}{If given, will add a column with this name containing the
 difference between the two.}
