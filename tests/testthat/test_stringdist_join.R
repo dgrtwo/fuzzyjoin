@@ -333,3 +333,19 @@ test_that("stringdist_ joins where there are no overlapping rows still get a dis
   expect_equal(a, result)
 })
 
+
+
+test_that("distance_col is only added per column when joining on multiple columns", {
+  ex_1 <- tibble::tibble(x1 = c("how", "now", "brown", "cow"),
+                         x2 = c("what", "do", "I", "know"))
+  ex_2 <- tibble::tibble(x1 = c("hw", "nw", "brwn", "cw"),
+                         x2 = c("wht", "d", "I", "knw"))
+
+  result <- stringdist_inner_join(ex_1, ex_2, by = c("x1", "x2"),
+                                  method = "lv", distance_col = "distance")
+
+  expect_equal(colnames(result),
+               c("x1.x", "x2.x", "x1.y", "x2.y", "x1.distance", "x2.distance"))
+  expect_equal(result$x1.distance, c(1, 1, 1, 1))
+  expect_equal(result$x2.distance, c(1, 1, 0, 1))
+})

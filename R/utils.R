@@ -26,11 +26,13 @@ common_by <- function(by = NULL, x, y) {
   )
 }
 
-# Make sure there's a distance column included in the output
+# Make sure there's a distance column included in the output. Joins on
+# multiple columns already add one per column (e.g. x1.distance), so skip those.
 ensure_distance_col <- function(ret, distance_col, mode) {
   if (!(mode %in% c("semi", "anti")) &&
       !is.null(distance_col) &&
-      is.null(ret[[distance_col]])) {
+      is.null(ret[[distance_col]]) &&
+      !any(endsWith(colnames(ret), paste0(".", distance_col)))) {
     if (nrow(ret) == 0) {
       ret[[distance_col]] <- numeric(0)
     } else {
